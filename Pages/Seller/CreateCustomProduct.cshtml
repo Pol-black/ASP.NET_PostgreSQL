@@ -1,0 +1,79 @@
+﻿@page "{id:int}"
+@model RazorPagesMovie.Pages.Seller.CreateCustomProductModel
+@{
+    ViewData["Title"] = "Создание индивидуального товара";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Создание индивидуального товара</h1>
+        <a class="btn btn-secondary" asp-page="/Seller/Index">
+            <i class="bi bi-arrow-left"></i> Назад к панели продавца
+        </a>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-warning">
+                    <h2 class="h5 mb-0">Информация о заказе</h2>
+                </div>
+                <div class="card-body">
+                    <p><strong>Покупатель:</strong> @Model.Order.IdBuyerNavigation?.AccountName</p>
+                    <p>
+                        <strong>Описание заказа:</strong>
+                        @(string.IsNullOrEmpty(Model.Order.TextAccounts) ? "Без описания" : Model.Order.TextAccounts)
+                    </p>
+                    <p><strong>Номер заказа:</strong> @Model.Order.IdProductionPurchase</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="h5 mb-0">Детали нового товара</h2>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        <input type="hidden" asp-for="CustomProduct.IdSeller" />
+                        <input type="hidden" asp-for="CustomProduct.IdIndivBuyer" />
+                        <input type="hidden" asp-for="CustomProduct.QuantityForSale" value="1" />
+                        <input type="hidden" asp-for="CustomProduct.Status" value="reserved" />
+
+                        <div class="mb-3">
+                            <label asp-for="CustomProduct.Name" class="form-label">Название товара <span class="text-danger">*</span></label>
+                            <input asp-for="CustomProduct.Name" class="form-control" required />
+                            <span asp-validation-for="CustomProduct.Name" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="CustomProduct.TypeArt" class="form-label">Тип искусства <span class="text-danger">*</span></label>
+                            <input asp-for="CustomProduct.TypeArt" class="form-control" required />
+                            <span asp-validation-for="CustomProduct.TypeArt" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="CustomProduct.Price" class="form-label">Цена (в рублях) <span class="text-danger">*</span></label>
+                            <input asp-for="CustomProduct.Price" class="form-control" type="number" step="0.01" min="0.01" required />
+                            <span asp-validation-for="CustomProduct.Price" class="text-danger"></span>
+                        </div>
+
+                        <button type="submit" class="btn btn-success">
+                            <i class="bi bi-check-circle"></i> Создать товар
+                        </button>
+                        <a asp-page="/Seller/Index" class="btn btn-secondary">
+                            <i class="bi bi-x-circle"></i> Отмена
+                        </a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

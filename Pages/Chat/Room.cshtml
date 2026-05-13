@@ -1,0 +1,123 @@
+﻿@page
+@attribute [Microsoft.AspNetCore.Authorization.Authorize(Roles = "admin,seller,buyer")]
+@model RazorPagesMovie.Pages.Chat.RoomModel
+
+<h1>Чат продавца с покупателем</h1>
+
+<div class="container-sm mt-4" style="max-width: 900px;">
+    <div class="card mb-4">
+        <div class="card-header bg-info text-white">
+            <h2 class="h5 mb-0">Переписка Покупателя с Продавцом</h2>
+        </div>
+
+        <!-- Два блока: Продавец и Покупатель -->
+        <div class="d-flex">
+            <div class="flex-fill text-center p-2 border">
+            Продавец: <strong>"@Model.SellerUser.AccountName"</strong>
+                @if (@Model.CurrentUser.IdRoleNavigation.RoleName == "seller") { <span>(Это Вы)</span>  }
+            </div>
+            <div class="flex-fill text-center p-2 border">
+                Покупатель: <strong>"@Model.BuyerUser.AccountName"</strong>
+                @if (@Model.CurrentUser.IdRoleNavigation.RoleName == "buyer") { <span>(Это Вы)</span> }
+            </div>
+        </div>
+    </<div>
+	<div class="card mb-4">
+        <div class="card-body" style="max-height: 400px; overflow-y: auto;">
+            @if (Model.ChatMessages.Count==0)
+            {
+                <p class="text-muted">Переписка пока пуста. Напишите первое сообщение!</p>
+            }
+            else
+            {
+                <div class="messages">
+                @foreach (var message in Model.ChatMessages)
+                {
+                    <div class="message mb-3 p-3 rounded @((message.DirectionFromSeller) ? "bg-success" : "bg-primary text-white ms-auto")" style="max-width: 80%;">
+                        <div class="message-header small fw-bold mb-1">
+                            @if (message.DirectionFromSeller)
+                            {   <span>(Продавец: @Model.SellerUser.AccountName)</span>
+                            } else {
+                                <span>(Покупатель: @Model.BuyerUser.AccountName)</span>
+							}
+                        </div>
+                        <div class="message-content">
+                            @message.TextAccounts
+                        </div>
+                    </div>
+                }
+                </div>
+            }
+        </div>
+    </div>
+
+
+@* Используем ms-auto для выравнивания вправо (Bootstrap) и тернарный оператор для цвета *@
+            <div class="card @(Model.CurrentUser.IdRoleNavigation.RoleName == "buyer" ? "ms-auto" : "")" style="width: 80%;">
+                <div class="card-header" style="background-color: @(Model.CurrentUser.IdRoleNavigation.RoleName == "buyer" ? "#0d6efd" : "#22dd77"); color: white;">
+                    <h2 class="h5 mb-0">Новое сообщение</h2>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        <div class="mb-3">
+                            <textarea asp-for="NewMessage" class="form-control" rows="3" placeholder="Введите ваше сообщение..."></textarea>
+                            <span asp-validation-for="NewMessage" class="text-danger"></span>
+                        </div>
+                        <button type="submit" class="btn btn-success">
+                            <i class="bi bi-send"></i> Отправить сообщение
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+
+</div>
+
+
+<style>
+    .messages {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .message {
+        margin-bottom: 1rem;
+        word-wrap: break-word;
+    }
+
+    .message-header {
+        font-size: 0.85em;
+    }
+
+    .message-content {
+        line-height: 1.4;
+    }
+</style>
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        // Автоматическая прокрутка к последнему сообщению
+        document.addEventListener('DOMContentLoaded', function() {
+            const messageContainer = document.querySelector('.card-body[style*="max-height"]');
+            if (messageContainer) {
+                messageContainer.scrollTop = messageContainer.scrollHeight;
+            }
+
+            // Автоматическая прокрутка после отправки сообщения
+            document.querySelector('form').addEventListener('submit', function() {
+                setTimeout(function() {
+                    const container = document.querySelector('.card-body[style*="max-height"]');
+                    if (container) {
+                        container.scrollTop = container.scrollHeight;
+                    }
+                }, 500);
+            });
+        });
+    </script>
+}
+
+

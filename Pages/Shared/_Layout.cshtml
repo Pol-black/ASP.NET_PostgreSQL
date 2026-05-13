@@ -1,0 +1,169 @@
+﻿@{
+    // Получаем имя и роль напрямую из Claims текущего пользователя
+    var userName = User.Identity?.IsAuthenticated == true
+        ? User.FindFirst(System.Security.Claims.ClaimsIdentity.DefaultNameClaimType)?.Value
+        : "Anonim";
+
+    var userRole = User.Identity?.IsAuthenticated == true
+        ? User.FindFirst(System.Security.Claims.ClaimsIdentity.DefaultRoleClaimType)?.Value
+        : "NoLogon";
+
+
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - RazorPagesMovie</title>
+    <script type="importmap"></script>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/RazorPagesMovie.styles.css" asp-append-version="true" />
+    <!-- Добавляем стили для кнопки входа -->
+    <style>
+        .login-button {
+            display: inline-flex;
+            align-items: center;
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 6px 12px;
+            text-decoration: none;
+            color: #212529;
+            transition: all 0.2s ease;
+            height: 38px;
+            margin-left: 10px;
+        }
+
+            .login-button:hover {
+                background-color: #e9ecef;
+                border-color: #ced4da;
+                transform: translateY(-1px);
+            }
+
+        .login-icon {
+            width: 28px;
+            height: 28px;
+            background-color: #e9ecef;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 8px;
+        }
+
+            .login-icon svg {
+                color: #495057;
+                width: 16px;
+                height: 16px;
+            }
+
+        .login-text {
+            font-weight: 500;
+            color: #0d6efd;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+            <div class="container">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-page="/Index">Каталог</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-page="/Chat/SelectChatPartner">Чат</a>
+                        </li>
+                        @if (User.IsInRole("seller"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-page="/Seller/Index">Продажа</a>
+                            </li>
+                        }
+                        @if (User.IsInRole("admin"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-page="/Admin">Панель админа</a>
+                            </li>
+                        }
+
+                    </ul>
+                    <div class="navbar-nav flex-grow-1 align-items-center">
+                        <span class="nav-item me-3">Имя: <strong>@userName</strong></span>
+                        @if (User.IsInRole("admin"))
+                        {
+                            <span class="nav-item me-3">Роль: <strong>Админ</strong></span>
+                        }
+                        else if (User.IsInRole("seller"))
+                        {
+                            <span class="nav-item me-3">Роль: <strong>Продавец</strong></span>
+                        }
+                        else if (User.IsInRole("buyer"))
+                        {
+                            <span class="nav-item me-3">Роль: <strong>Покупатель</strong></span>
+                        }
+                        else
+                        {
+                            <span class="nav-item me-3">Роль: <strong>Гость</strong></span>
+                        }
+                        @* <span class="nav-item me-3">Роль: <strong>@userRole</strong></span> *@
+
+                        @* на время отладки *@
+                        @if (int.TryParse(User.FindFirst("idaccount")?.Value, out int accountId))
+                        {    <span class="nav-item me-3">ID аккаунта: @accountId</span>
+                        }
+                        
+
+                    </div>
+
+                    <!-- Кнопка входа/выхода в правом верхнем углу -->
+                    <div class="d-flex align-items-center">
+                        @if (User.Identity?.IsAuthenticated == true)
+                        {
+                            <a href="/logout" class="btn btn-outline-danger btn-sm">Выйти</a>
+                        }
+                        else
+                        {
+                            <a asp-page="/Authorization" class="login-button">
+                                <div class="login-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                        <path d="M8 8a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c-.001.246-.154.986-.832 1.664-.189.139-.397.289-.63.44-.79.545-2.123 1.184-3.442 1.184-1.32 0-2.653-.639-3.442-1.184-.233-.151-.441-.3-.63-.44-.678-.678-.832-1.418-.832-1.664 0-.004.001-.008.001-.013 0-.013-.008-.026-.016-.037-.02-.029-.03-.055-.037-.08-.007-.025-.009-.05-.009-.075 0-.042.013-.083.032-0.12.03-.055.07-.115.12-.173z" />
+                                    </svg>
+                                </div>
+                                <span class="login-text">Войти</span>
+                            </a>
+                        }
+                    </div>
+
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2025 - RazorPagesMovie - <a asp-area="" asp-page="/Privacy">Privacy</a>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

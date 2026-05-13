@@ -1,0 +1,69 @@
+﻿@page
+@model RazorPagesMovie.Pages.ProductionPurchase.CreateModel
+
+@{
+    ViewData["Title"] = "Создать производственный заказ";
+}
+
+<h2>Создать новую запись</h2>
+
+<form method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="form-group mb-3">
+        <label asp-for="ProductionPurchase.IdSeller">Продавец</label>
+        <select asp-for="ProductionPurchase.IdSeller"
+                asp-items="Model.SellerList"
+                class="form-control">
+            <option value="">-- Выберите продавца --</option>
+        </select>
+        <span asp-validation-for="ProductionPurchase.IdSeller" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mb-3">
+        <label asp-for="ProductionPurchase.IdBuyer">Покупатель</label>
+        <select asp-for="ProductionPurchase.IdBuyer"
+                asp-items="Model.BuyerList"
+                class="form-control">
+            <option value="">-- Выберите покупателя --</option>
+        </select>
+        <span asp-validation-for="ProductionPurchase.IdBuyer" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mb-3">
+        <label asp-for="ProductionPurchase.IdProduct">Товар (опционально)</label>
+        <select asp-for="ProductionPurchase.IdProduct"
+                asp-items="Model.ProductList"
+                class="form-control">
+            <option value="">— Не указан —</option>
+        </select>
+        <span asp-validation-for="ProductionPurchase.IdProduct" class="text-danger"></span>
+    </div>
+
+    <div class="form-check mb-3">
+        <input asp-for="ProductionPurchase.DirectionFromSeller" class="form-check-input" />
+        <label asp-for="ProductionPurchase.DirectionFromSeller" class="form-check-label">
+            Направление: от продавца
+        </label>
+        <span asp-validation-for="ProductionPurchase.DirectionFromSeller" class="text-danger d-block"></span>
+    </div>
+
+    <div class="form-group mb-3">
+        <label asp-for="ProductionPurchase.TextAccounts">Текстовое сообщение</label>
+        <input asp-for="ProductionPurchase.TextAccounts"
+               placeholder="Дополнительная информация"
+               class="form-control" />
+        <span asp-validation-for="ProductionPurchase.TextAccounts" class="text-danger"></span>
+    </div>
+
+    <div class="mt-3">
+        <input type="submit" value="Создать" class="btn btn-primary" />
+        <a asp-page="./Index" class="btn btn-secondary ms-2">Отмена</a>
+    </div>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

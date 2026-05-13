@@ -1,0 +1,205 @@
+﻿@page
+@model RazorPagesMovie.Pages.Seller.SellerIndexModel
+@{
+    ViewData["Title"] = "Панель продавца";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Панель продавца: @Model.SellerAccount?.AccountName</h1>
+        <a class="btn btn-primary" asp-page="/Product/Create">
+            <i class="bi bi-plus-circle"></i> Добавить товар
+        </a>
+    </div>
+
+    <div class="row">
+        <!-- Левая колонка: Мои товары -->
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="h5 mb-0">Мои товары</h2>
+                </div>
+                <div class="card-body">
+                    @if (Model.Products != null && Model.Products.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Название</th>
+                                        <th>Тип</th>
+                                        <th>Цена</th>
+                                        <th>Статус</th>
+                                        <th>Действия</th>
+                                    </tr>
+                                </thead>
+
+
+
+                                <tbody>
+                                    @foreach (var item in Model.Products)
+                                    {
+                                        <tr>
+                                            <td>@Html.DisplayFor(modelItem => item.Name)</td>
+                                            <td>@Html.DisplayFor(modelItem => item.TypeArt)</td>
+                                            <td>@Html.DisplayFor(modelItem => item.Price)</td>
+                                            <td>
+                                                @if (item.Status == "available")
+                                                {
+                                                    <span class="badge bg-success">В продаже</span>
+                                                }
+                                                else if (item.Status == "reserved")
+                                                {
+                                                    <span class="badge bg-secondary">Зарезервирован</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-secondary">Продан</span>
+                                                }
+                                                @if(item.IdIndivBuyer != null)
+                                                {
+                                                    <br><span class="badge bg-secondary">Персональный заказ</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                <a class="btn btn-sm btn-info" asp-page="/Product/Details" asp-route-id="@item.IdProduct">
+                                                    <i class="bi bi-eye"></i> Просмотреть
+                                                </a>
+                                                <a class="btn btn-sm btn-secondary" asp-page="/Product/Edit" asp-route-id="@item.IdProduct">
+                                                    <i class="bi bi-pencil"></i> Редактировать
+                                                </a>
+                                                <a class="btn btn-sm btn-danger" asp-page="/Product/Delete" asp-route-id="@item.IdProduct">
+                                                    <i class="bi bi-trash"></i> Удалить
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted">У вас пока нет товаров. Создайте первый товар!</p>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- ЗАКАЗЫ -->
+        <div class="col-md-6">
+            <div class="card mb-4 shadow-sm">
+                <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+                    <h2 class="h5 mb-0"><i class="bi bi-cart-check me-2"></i>ЗАКАЗЫ</h2>
+                    <span class="badge bg-light text-dark fs-6">@Model.OrdersItems?.Count</span>
+                </div>
+                <div class="card-body p-0">
+                    @if (Model.OrdersItems != null && Model.OrdersItems.Any())
+                    {
+                        <div class="list-group list-group-flush">
+                            @foreach (var order in Model.OrdersItems)
+                            {
+                                <div class="list-group-item border-bottom p-3">
+                                    <!-- Заголовок заказа -->
+                                    <div class="d-flex justify-content-between align-items-start mb-3">
+                                        <div>
+                                            <h5 class="fw-bold text-primary mb-1">
+                                                <i class="bi bi-receipt me-2"></i>Заказ #@order.IdPurchaseNavigation.NumberPurchase
+                                            </h5>
+                                            <h6 class="text-dark mb-2">
+                                                <i class="bi bi-box-seam me-2"></i>@order.IdProductNavigation.Name
+                                            </h6>
+                                        </div>
+                                        <span class="badge bg-primary fs-6 px-3 py-2">
+                                            <i class="bi bi-123 me-1"></i>@order.QuantityInPurchase шт.
+                                        </span>
+                                    </div>
+
+                                    <!-- Основная информация -->
+                                    <div class="row mb-3">
+                                        <!-- Цена -->
+                                        <div class="col-md-6 mb-2">
+                                            <div class="d-flex align-items-center">
+                                                <i class="bi bi-tag text-secondary me-2 fs-5"></i>
+                                                <div>
+                                                    <small class="text-muted d-block">Цена за единицу</small>
+                                                    <span class="fw-bold fs-5 text-success">
+                                                        @order.PriceInPurchase.ToString("N2") ₽
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Итого -->
+                                        <div class="col-md-6 mb-2">
+                                            <div class="d-flex align-items-center">
+                                                <i class="bi bi-cash-stack text-secondary me-2 fs-5"></i>
+                                                <div>
+                                                    <small class="text-muted d-block">Сумма заказа</small>
+                                                    <span class="fw-bold fs-5 text-dark">
+                                                        @((order.QuantityInPurchase * order.PriceInPurchase).ToString("N2")) ₽
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Адрес доставки -->
+                                    <div class="mb-3">
+                                        <div class="d-flex align-items-start">
+                                            <i class="bi bi-geo-alt text-secondary me-2 mt-1 fs-5"></i>
+                                            <div>
+                                                <small class="text-muted d-block">Адрес доставки</small>
+                                                <span class="text-dark">
+                                                    @order.IdPurchaseNavigation.AddressDeparture
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Дополнительная информация -->
+                                    <div class="bg-light p-2 rounded">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <small class="text-muted">
+                                                    <i class="bi bi-calendar me-1"></i>
+                                                    Дата: @order.IdPurchaseNavigation.CreatedAt.ToString("dd.MM.yyyy")
+                                                </small>
+                                            </div>
+                                            <div class="col-md-6 text-end">
+                                                <small class="text-muted">
+                                                    ID товара: @order.IdProductNavigation.IdProduct
+                                                </small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-5">
+                            <div class="mb-3">
+                                <i class="bi bi-cart-x text-muted" style="font-size: 3rem;"></i>
+                            </div>
+                            <p class="text-muted mb-1">Заказов пока нет</p>
+                            <p class="text-muted small">Ваши заказы появятся здесь</p>
+                        </div>
+                    }
+                </div>
+
+                <!-- Футер карточки -->
+                @if (Model.OrdersItems != null && Model.OrdersItems.Any())
+                {
+                    <div class="card-footer bg-light text-end">
+                        <small class="text-muted">
+                            <i class="bi bi-info-circle me-1"></i>
+                            Всего заказов: @Model.OrdersItems.Count
+                        </small>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

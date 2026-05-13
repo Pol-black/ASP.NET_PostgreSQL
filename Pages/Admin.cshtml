@@ -1,0 +1,19 @@
+﻿@page
+@attribute [Microsoft.AspNetCore.Authorization.Authorize(Roles = "admin")]
+
+@model AdminModel
+@{
+    ViewData["Title"] = "Домашняя страница проекта Полины";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Панель админа</h1>
+
+    <p>Таблица Пользователей: <a href="/Account/Index">ссылка</a></p>
+    <p>Товары: <a href="/Product/Index">ссылка</a></p>
+    <p>Каталог Материалов: <a href="/CatalogForMaterial/Index">ссылка</a></p>
+    <p>Связь материала и товара: <a href="/ConnectProductMaterial/Index">ссылка</a></p>
+    <p>Заказы: <a href="/Purchase/Index">ссылка</a></p>
+    <p>Позиция заказа: <a href="/ItemPurchase/Index">ссылка</a></p>
+    <p>Чат заказов на изготовление: <a href="/ProductionPurchase/Index">ссылка</a></p>
+</div>

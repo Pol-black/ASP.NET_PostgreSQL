@@ -1,0 +1,295 @@
+﻿@page
+@model RazorPagesMovie.Pages.IndexModel
+@{
+    ViewData["Title"] = "Каталог товаров";
+}
+
+<style>
+    .product-list-container {
+        padding: 20px;
+    }
+
+    .product-block {
+        border: 1px solid #ddd;
+        padding: 15px;
+        margin-bottom: 25px;
+        border-radius: 8px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    .personal-block {
+        background-color: #e6f7ff;
+        border-left: 5px solid #007bff;
+    }
+
+    .general-block {
+        background-color: #f0fff0;
+        border-left: 5px solid #28a745;
+    }
+
+    .block-header {
+        font-size: 1.2em;
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: #333;
+    }
+
+    .product-cards {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        margin-top: 10px;
+    }
+
+    .product-card {
+        border: 1px solid #aaa;
+        padding: 15px;
+        min-width: 180px;
+        text-align: center;
+        background-color: #fff;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        border-radius: 6px;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+        .product-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+    .card-title {
+        font-weight: bold;
+        margin-bottom: 5px;
+        color: #2c3e50;
+        text-decoration: none;
+    }
+
+    .card-type {
+        font-size: 0.85em;
+        color: #6c757d;
+        margin-bottom: 5px;
+    }
+
+    .card-price {
+        margin-bottom: 15px;
+        color: #e44d26;
+        font-size: 1.1em;
+        font-weight: bold;
+    }
+
+    .order-button {
+        width: 100%;
+        padding: 8px 0;
+        color: white;
+        border: none;
+        cursor: pointer;
+        border-radius: 4px;
+        font-weight: 500;
+        margin-top: 5px;
+        transition: background-color 0.2s;
+        font-size: 0.9em;
+        display: inline-block;
+        text-align: center;
+        text-decoration: none;
+    }
+
+    .personal-card .order-button {
+        background-color: #ff00a8;
+    }
+
+        .personal-card .order-button:hover {
+            background-color: #e60095;
+        }
+
+    .general-card .order-button {
+        background-color: #007bff;
+    }
+
+        .general-card .order-button:hover {
+            background-color: #0069d9;
+        }
+
+        .general-card .order-button.disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+            color: white;
+            pointer-events: none;
+        }
+
+    .message-box {
+        padding: 12px 15px;
+        margin-bottom: 15px;
+        border-radius: 4px;
+        font-size: 0.95em;
+    }
+
+    .success {
+        background-color: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+    }
+
+    .error {
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+    }
+
+    .info-box {
+        background-color: #d1ecf1;
+        border: 1px solid #bee5eb;
+        color: #0c5460;
+        padding: 12px 15px;
+        border-radius: 4px;
+        margin-bottom: 20px;
+        font-size: 0.9em;
+    }
+
+    .card-details {
+        font-size: 0.85em;
+        color: #6c757d;
+        margin-top: 8px;
+        text-align: left;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 2px 6px;
+        border-radius: 8px;
+        font-size: 0.7em;
+        font-weight: bold;
+        margin-top: 3px;
+    }
+
+    .status-available {
+        background-color: #28a745;
+        color: white;
+    }
+
+    .auth-required {
+        text-align: center;
+        padding: 15px;
+        background-color: #fff3cd;
+        border: 1px solid #ffeaa7;
+        border-radius: 6px;
+        margin: 15px 0;
+        font-size: 0.9em;
+    }
+
+    .product-details-link {
+        color: #2c3e50;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+        .product-details-link:hover {
+            color: #007bff;
+            text-decoration: underline;
+        }
+</style>
+
+<div class="product-list-container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Каталог товаров</h1>
+        @if (!User.Identity?.IsAuthenticated ?? true)
+        {
+            <div class="auth-required">
+                <i class="bi bi-info-circle me-2"></i>
+                Вы можете просматривать товары без регистрации, но для оформления заказа необходимо <a asp-page="/Authorization">войти в систему</a>.
+            </div>
+        }
+    </div>
+
+    <!-- Информационная сноска о заказе -->
+    <div class="info-box">
+        <i class="bi bi-info-circle me-2"></i>
+        <strong>Как оформить заказ:</strong> нажмите на кнопку "Заказать" под товаром, который вы хотите приобрести.<br />
+        Создание <strong>"Персонального заказа"</strong> обсуждайте в чате с продавцом.
+    </div>
+
+    @* Сообщения об успехе или ошибке после заказа *@
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="message-box success">@TempData["SuccessMessage"]</div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="message-box error">@TempData["ErrorMessage"]</div>
+    }
+
+    @if (Model.IndividualProducts != null)
+    {
+        <div class="product-block personal-block">
+            <div class="block-header">Ваши персональные товары</div>
+            <p style="font-size: 0.9em; margin-top: -5px; color: #555;">Товары, созданные специально для вас по индивидуальному заказу.</p>
+            <div class="product-cards">
+                @foreach (var product in Model.IndividualProducts)
+                {
+                    <div class="product-card personal-card">
+                        <div class="card-type">@product.TypeArt</div>
+                    <div class="card-title">
+                        <a asp-page="/Product/Details" asp-route-id="Model.IndividualProducts.Id" class="product-details-link">
+                                @product.Name
+                        </a>
+                    </div>
+                        <div class="card-price">Цена: @product.Price.ToString("C")</div>
+                    <div class="card-details">
+                        <span class="status-badge status-available">Готов к заказу</span>
+                    </div>
+                        <a asp-page="/Order/Create" asp-route-id="@product.Id" class="order-button">
+                        Заказать
+                    </a>
+                </div>
+                }
+            </div>
+        </div>
+    }
+
+    <div class="product-block general-block">
+        <div class="block-header">Каталог товаров</div>
+        <p style="font-size: 0.9em; margin-top: -5px; color: #555;">Общедоступные товары, доступные для всех покупателей.</p>
+        <div class="product-cards">
+            @foreach (var product in Model.CatalogProducts)
+            {
+                <div class="product-card general-card">
+                    <div class="card-type">@product.TypeArt</div>
+                    <div class="card-title">
+                        <a asp-page="/Product/Details" asp-route-id="@product.Id" class="product-details-link">
+                            @product.Name
+                        </a>
+                    </div>
+                    <div class="card-price">Цена: @product.Price.ToString("C")</div>
+                    <div class="card-details">
+                        <span class="status-badge status-available">В наличии: @product.QuantityForSale шт.</span>
+                    </div>
+                    @if (User.Identity?.IsAuthenticated ?? false)
+                    {
+                        <a asp-page="/Order/Create" asp-route-id="@product.Id" class="order-button">
+                            Заказать
+                        </a>
+                    }
+                    else
+                    {
+                        <button class="order-button disabled">
+                            Требуется вход
+                        </button>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<script>
+    // Добавляем обработчик для кнопок "Требуется вход"
+    document.querySelectorAll('.order-button.disabled').forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            alert('Для оформления заказа необходимо войти в систему.');
+            window.location.href = '/Authorization';
+        });
+    });
+</script>

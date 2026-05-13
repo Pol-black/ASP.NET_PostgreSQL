@@ -1,0 +1,87 @@
+﻿@page
+@attribute [Microsoft.AspNetCore.Authorization.Authorize(Roles = "admin")]
+@model RazorPagesMovie.Pages.Account.EditModel
+
+@{
+    ViewData["Title"] = "Редактировать пользователя";
+}
+
+<h2>Редактировать пользователя</h2>
+
+<form method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <input type="hidden" asp-for="Account.IdAccount" />
+
+    <div class="form-group mb-3">
+        <label asp-for="Account.AccountName">Имя пользователя</label>
+        <input asp-for="Account.AccountName" class="form-control" />
+        <span asp-validation-for="Account.AccountName" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mb-3">
+        <label asp-for="Account.Address">Адрес</label>
+        <input asp-for="Account.Address" class="form-control" />
+        <span asp-validation-for="Account.Address" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mb-3">
+        <label asp-for="Account.Email">Email</label>
+        <input asp-for="Account.Email" type="email" class="form-control" />
+        <span asp-validation-for="Account.Email" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mb-3">
+        <label asp-for="Account.Phone">Телефон</label>
+        <input asp-for="Account.Phone" class="form-control" />
+        <span asp-validation-for="Account.Phone" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mb-3">
+        <label asp-for="Account.Password">Пароль</label>
+        <div class="input-group">
+            <input asp-for="Account.Password"
+                   type="password"
+                   id="password"
+                   class="form-control" />
+            <button type="button" class="btn btn-outline-secondary" onclick="togglePassword()">
+                Показать
+            </button>
+        </div>
+        <span asp-validation-for="Account.Password" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mb-3">
+        <label asp-for="Account.IdRole">Роль</label>
+        <select asp-for="Account.IdRole"
+                asp-items="Model.RoleList"
+                class="form-control">
+        </select>
+        <span asp-validation-for="Account.IdRole" class="text-danger"></span>
+    </div>
+
+    <div class="mt-3">
+        <input type="submit" value="Сохранить" class="btn btn-primary" />
+        <a asp-page="./Index" class="btn btn-secondary ms-2">Отмена</a>
+    </div>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        function togglePassword() {
+            const passwordField = document.getElementById("password");
+            const button = event.target;
+
+            if (passwordField.type === "password") {
+                passwordField.type = "text";
+                button.textContent = "Скрыть";
+            } else {
+                passwordField.type = "password";
+                button.textContent = "Показать";
+            }
+        }
+    </script>
+}
