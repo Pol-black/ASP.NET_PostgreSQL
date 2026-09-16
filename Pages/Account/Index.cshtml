@@ -1,0 +1,72 @@
+﻿@page
+@attribute [Microsoft.AspNetCore.Authorization.Authorize(Roles = "admin")]
+@model RazorPagesMovie.Pages.Account.IndexModel
+
+@{
+    ViewData["Title"] = "Пользователи";
+}
+
+<h1>Пользователи</h1>
+<p>
+    <a asp-page="Create" class="btn btn-success">+ Создать нового пользователя</a>
+</p>
+<!-- Форма поиска и фильтрации -->
+<form method="get" class="mb-3">
+    <div class="row g-2">
+        <div class="col-md-4">
+            <input type="text"
+                   name="search"
+                   value="@Model.SearchString"
+                   class="form-control"
+                   placeholder="Поиск по имени, email или телефону" />
+        </div>
+        <div class="col-md-3">
+            <select name="role" class="form-control">
+                <option value="">Все роли</option>
+                <option value="seller" selected="@(Model.RoleFilter == "seller")">Продавец</option>
+                <option value="buyer" selected="@(Model.RoleFilter == "buyer")">Покупатель</option>
+                <option value="admin" selected="@(Model.RoleFilter == "admin")">Администратор</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <button type="submit" class="btn btn-primary">Фильтровать</button>
+            <a asp-page="./Index" class="btn btn-secondary ms-2">Сброс</a>
+        </div>
+    </div>
+</form>
+
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.Account[0].AccountName)</th>
+            <th>@Html.DisplayNameFor(model => model.Account[0].Address)</th>
+            <th>@Html.DisplayNameFor(model => model.Account[0].Email)</th>
+            <th>@Html.DisplayNameFor(model => model.Account[0].Phone)</th>
+            <th>Роль</th>
+            <th>Действия</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Account)
+        {
+            <tr>
+                <td>@item.AccountName</td>
+                <td>@item.Address</td>
+                <td><a href="mailto:@item.Email">@item.Email</a></td>
+                <td>@item.Phone</td>
+                
+                @if (@item.IdRoleNavigation?.RoleName == "admin")  { <td>админ</td>}
+                @if (@item.IdRoleNavigation?.RoleName == "seller") { <td>продавец</td>}
+                @if (@item.IdRoleNavigation?.RoleName == "buyer")  { <td>покупатель</td> }
+
+                
+                <td>
+                    <a asp-page="./Edit" asp-route-id="@item.IdAccount">Изменить</a> |
+                    <a asp-page="./Details" asp-route-id="@item.IdAccount">Подробности</a> |
+                    <a asp-page="./Delete" asp-route-id="@item.IdAccount">Удалить</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

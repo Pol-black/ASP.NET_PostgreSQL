@@ -1,0 +1,35 @@
+﻿@page
+@attribute [Microsoft.AspNetCore.Authorization.Authorize(Roles = "admin")]
+@model RazorPagesMovie.Pages.Account.DetailsModel
+
+@{
+    ViewData["Title"] = "Детали пользователя";
+}
+
+<h2>Детали пользователя</h2>
+
+<div class="card">
+    <div class="card-body">
+        <dl class="row mb-0">
+            <dt class="col-sm-3">Имя пользователя</dt>
+            <dd class="col-sm-9">@Html.DisplayFor(model => model.Account.AccountName)</dd>
+
+            <dt class="col-sm-3">Адрес</dt>
+            <dd class="col-sm-9">@Html.DisplayFor(model => model.Account.Address)</dd>
+
+            <dt class="col-sm-3">Email</dt>
+            <dd class="col-sm-9"><a href="mailto:@Model.Account.Email">@Html.DisplayFor(model => model.Account.Email)</a></dd>
+
+            <dt class="col-sm-3">Телефон</dt>
+            <dd class="col-sm-9">@Html.DisplayFor(model => model.Account.Phone)</dd>
+
+            <dt class="col-sm-3">Роль</dt>
+            <dd class="col-sm-9">@Model.Account.IdRoleNavigation?.RoleName</dd>
+        </dl>
+    </div>
+</div>
+
+<div class="mt-3">
+    <a asp-page="./Edit" asp-route-id="@Model.Account.IdAccount" class="btn btn-primary">Изменить</a>
+    <a asp-page="./Index" class="btn btn-secondary ms-2">Назад к списку</a>
+</div>

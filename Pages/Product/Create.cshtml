@@ -1,0 +1,235 @@
+﻿@page
+@model RazorPagesMovie.Pages.Product.CreateModel
+
+@{
+    ViewData["Title"] = "Создать товар";
+}
+
+<h2>Создать новый товар</h2>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<form method="post" id="createForm">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="form-group mb-3">
+        <label asp-for="Product.Name" class="control-label">Название товара</label>
+        <input asp-for="Product.Name" class="form-control" />
+        <span asp-validation-for="Product.Name" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mb-3">
+        <label asp-for="Product.TypeArt" class="control-label">Тип искусства</label>
+        <input asp-for="Product.TypeArt" class="form-control" />
+        <span asp-validation-for="Product.TypeArt" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mb-3">
+        <label asp-for="Product.IdSeller" class="control-label">Продавец</label>
+        <select asp-for="Product.IdSeller" class="form-control" asp-items="ViewBag.IdSeller">
+            <option value="">-- Выберите продавца --</option>
+        </select>
+        <span asp-validation-for="Product.IdSeller" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mb-3">
+        <label asp-for="Product.QuantityForSale" class="control-label">Количество товара</label>
+        <input asp-for="Product.QuantityForSale" type="number" class="form-control" min="0" max="10000" />
+        <span asp-validation-for="Product.QuantityForSale" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mb-3">
+        <label asp-for="Product.Price" class="control-label">Цена</label>
+        <input asp-for="Product.Price" type="number" step="0.01" class="form-control" min="0.01" />
+        <span asp-validation-for="Product.Price" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mb-3">
+        <label asp-for="Product.Status" class="control-label">Статус</label>
+        <select asp-for="Product.Status" class="form-control">
+            <option value="">-- Выберите статус --</option>
+            <option value="available">В наличии</option>
+            <option value="reserved">Зарезервирован</option>
+            <option value="sold">Продан</option>
+        </select>
+        <span asp-validation-for="Product.Status" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mb-3">
+        <label asp-for="Product.IdIndivBuyer" class="control-label">Индивидуальный покупатель (опционально)</label>
+        <select asp-for="Product.IdIndivBuyer" class="form-control" asp-items="ViewBag.IdIndivBuyer">
+            <option value="">— Не выбран —</option>
+        </select>
+        <span asp-validation-for="Product.IdIndivBuyer" class="text-danger"></span>
+    </div>
+
+    <!-- Секция выбора материалов -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5>Материалы для продукта</h5>
+            <small class="text-muted">Вы можете добавить один или несколько материалов</small>
+        </div>
+        <div class="card-body">
+            <div class="mb-3">
+                <label class="form-label">Выберите материалы:</label>
+                <select id="materialSelect" class="form-control" asp-items="Model.MaterialsList">
+                    <option value="">-- Выберите материал --</option>
+                </select>
+                <button type="button" id="addMaterialBtn" class="btn btn-sm btn-outline-primary mt-2">
+                    <i class="bi bi-plus-circle"></i> Добавить материал
+                </button>
+            </div>
+
+            <div id="materialsContainer">
+                <!-- Динамически добавляемые материалы будут здесь -->
+            </div>
+
+            <div class="alert alert-info mt-3">
+                <i class="bi bi-info-circle"></i> К каждому материалу нужно указать количество и единицу измерения
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-3">
+        <button type="submit" class="btn btn-primary">
+            <i class="bi bi-check-circle"></i> Создать товар
+        </button>
+        <a href="@Model.ReturnUrl" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Вернуться
+        </a>
+    </div>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        $(document).ready(function() {
+            let materialIndex = 0;
+
+            $('#addMaterialBtn').click(function() {
+                const materialSelect = $('#materialSelect');
+                const selectedOption = materialSelect.find('option:selected');
+                const materialId = selectedOption.val();
+                const materialName = selectedOption.text();
+
+                if (!materialId) {
+                    alert('Пожалуйста, выберите материал из списка');
+                    return;
+                }
+
+                // Проверяем, не добавлен ли уже этот материал
+                if ($(`input[name="SelectedMaterialIds"][value="${materialId}"]`).length > 0) {
+                    alert('Этот материал уже добавлен');
+                    return;
+                }
+
+                // Создаем HTML для нового материала
+                const materialHtml = `
+                    <div class="material-item card mb-2 p-3" data-material-id="${materialId}">
+                        <div class="row align-items-center">
+                            <div class="col-md-4">
+                                <strong>${materialName}</strong>
+                                <input type="hidden" name="SelectedMaterialIds" value="${materialId}" />
+                                <input type="hidden" name="MaterialQuantities[${materialIndex}].MaterialId" value="${materialId}" />
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label small mb-1">Количество:</label>
+                                <input type="number"
+                                       name="MaterialQuantities[${materialIndex}].Quantity"
+                                       class="form-control form-control-sm"
+                                       step="0.001"
+                                       min="0.001"
+                                       required
+                                       placeholder="0.001" />
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label small mb-1">Единица измерения:</label>
+                                <input type="text"
+                                       name="MaterialQuantities[${materialIndex}].Unit"
+                                       class="form-control form-control-sm"
+                                       placeholder="шт, кг, м"
+                                       required />
+                            </div>
+                            <div class="col-md-2">
+                                <button type="button" class="btn btn-sm btn-danger remove-material-btn">
+                                    <i class="bi bi-trash"></i> Удалить
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                $('#materialsContainer').append(materialHtml);
+                materialIndex++;
+
+                // Сбрасываем выбор
+                materialSelect.val('');
+            });
+
+            // Удаление материала
+            $(document).on('click', '.remove-material-btn', function() {
+                $(this).closest('.material-item').remove();
+                reindexMaterials();
+            });
+
+            function reindexMaterials() {
+                materialIndex = 0;
+                $('.material-item').each(function() {
+                    const materialId = $(this).data('material-id');
+                    $(this).find('input[name="SelectedMaterialIds"]').attr('name', `SelectedMaterialIds`);
+                    $(this).find('input[name^="MaterialQuantities["]').each(function() {
+                        const name = $(this).attr('name');
+                        if (name.includes('MaterialId')) {
+                            $(this).attr('name', `MaterialQuantities[${materialIndex}].MaterialId`);
+                        } else if (name.includes('Quantity')) {
+                            $(this).attr('name', `MaterialQuantities[${materialIndex}].Quantity`);
+                        } else if (name.includes('Unit')) {
+                            $(this).attr('name', `MaterialQuantities[${materialIndex}].Unit`);
+                        }
+                    });
+                    materialIndex++;
+                });
+            }
+
+            // Валидация перед отправкой
+            $('#createForm').on('submit', function() {
+                // Проверяем, что хотя бы один материал выбран (не обязательно)
+                const hasMaterials = $('.material-item').length > 0;
+                if (!hasMaterials) {
+                    if (!confirm('Вы не добавили ни одного материала. Продолжить без материалов?')) {
+                        return false;
+                    }
+                }
+
+                // Проверяем заполненность полей материалов
+                let isValid = true;
+                $('.material-item').each(function() {
+                    const quantity = $(this).find('input[name*="Quantity"]').val();
+                    const unit = $(this).find('input[name*="Unit"]').val();
+
+                    if (!quantity || parseFloat(quantity) <= 0) {
+                        alert('Пожалуйста, укажите корректное количество для всех материалов');
+                        isValid = false;
+                        return false;
+                    }
+                    if (!unit || unit.trim() === '') {
+                        alert('Пожалуйста, укажите единицу измерения для всех материалов');
+                        isValid = false;
+                        return false;
+                    }
+                });
+
+                return isValid;
+            });
+        });
+    </script>
+}

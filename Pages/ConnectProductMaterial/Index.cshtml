@@ -1,0 +1,39 @@
+﻿@page
+@model RazorPagesMovie.Pages.ConnectProductMaterial.IndexModel
+
+@{
+    ViewData["Title"] = "Связи товаров и материалов";
+}
+
+<h1>Связи товаров и материалов</h1>
+<p>
+    <a asp-page="Create" class="btn btn-success">+ Добавить связь</a>
+</p>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Товар</th>
+            <th>Материал</th>
+            <th>Количество</th>
+            <th>Ед. изм.</th>
+            <th>Действия</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.ConnectProductMaterial)
+        {
+            <tr>
+                <td>@item.IdProductNavigation?.Name</td>
+                <td>@item.IdMaterialNavigation?.MaterialName</td>
+                <td>@item.Quantity.ToString("F2")</td>
+                <td>@item.Unit</td>
+                <td>
+                    <a asp-page="./Edit" asp-route-id="@item.Id">Изменить</a> |
+                    <a asp-page="./Details" asp-route-id="@item.Id">Подробности</a> |
+                    <a asp-page="./Delete" asp-route-id="@item.Id">Удалить</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

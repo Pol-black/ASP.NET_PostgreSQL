@@ -1,0 +1,40 @@
+﻿@page
+@attribute [Microsoft.AspNetCore.Authorization.Authorize(Roles = "admin")]
+@model RazorPagesMovie.Pages.Account.DeleteModel
+
+@{
+    ViewData["Title"] = "Удалить пользователя";
+}
+
+<h2>Удалить пользователя</h2>
+
+<div class="alert alert-warning">
+    <strong>Вы уверены, что хотите удалить этого пользователя?</strong>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <dl class="row mb-0">
+            <dt class="col-sm-3 fw-bold">Имя пользователя</dt>
+            <dd class="col-sm-9">@Html.DisplayFor(model => model.Account.AccountName)</dd>
+
+            <dt class="col-sm-3 fw-bold">Адрес</dt>
+            <dd class="col-sm-9">@Html.DisplayFor(model => model.Account.Address)</dd>
+
+            <dt class="col-sm-3 fw-bold">Email</dt>
+            <dd class="col-sm-9"><a href="mailto:@Model.Account.Email">@Html.DisplayFor(model => model.Account.Email)</a></dd>
+
+            <dt class="col-sm-3 fw-bold">Телефон</dt>
+            <dd class="col-sm-9">@Html.DisplayFor(model => model.Account.Phone)</dd>
+
+            <dt class="col-sm-3 fw-bold">Роль</dt>
+            <dd class="col-sm-9">@Model.Account.IdRoleNavigation?.RoleName</dd>
+        </dl>
+    </div>
+</div>
+
+<form method="post" class="mt-3">
+    <input type="hidden" asp-for="Account.IdAccount" />
+    <button type="submit" class="btn btn-danger">Удалить</button>
+    <a asp-page="./Index" class="btn btn-secondary ms-2">Отмена</a>
+</form>

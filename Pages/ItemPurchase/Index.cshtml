@@ -1,0 +1,41 @@
+﻿@page
+@model RazorPagesMovie.Pages.ItemPurchase.IndexModel
+
+@{
+    ViewData["Title"] = "Позиции заказов";
+}
+
+<h1>Позиции заказов</h1>
+<p>
+    <a asp-page="Create" class="btn btn-success">+ Добавить позицию</a>
+</p>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Заказ</th>
+            <th>Товар</th>
+            <th>Количество</th>
+            <th>Цена</th>
+            <th>Статус</th>
+            <th>Действия</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.ItemPurchase)
+        {
+            <tr>
+                <td>@item.IdPurchaseNavigation?.IdPurchase</td>
+                <td>@item.IdProductNavigation?.Name</td>
+                <td>@item.QuantityInPurchase</td>
+                <td>@item.PriceInPurchase.ToString("F2") ₽</td>
+                <td>@item.StatusItem</td>
+                <td>
+                    <a asp-page="./Edit" asp-route-id="@item.IdItemPurchase">Изменить</a> |
+                    <a asp-page="./Details" asp-route-id="@item.IdItemPurchase">Подробности</a> |
+                    <a asp-page="./Delete" asp-route-id="@item.IdItemPurchase">Удалить</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

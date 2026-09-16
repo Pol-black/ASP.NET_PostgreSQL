@@ -1,0 +1,69 @@
+﻿@page
+@model RazorPagesMovie.Pages.Product.EditModel
+
+@{
+    ViewData["Title"] = "Редактировать товар";
+}
+
+<h2>Редактировать товар</h2>
+
+<form method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <input type="hidden" asp-for="Product.IdProduct" />
+
+    @* Скрытое поле для сохранения пути возврата *@
+    <input type="hidden" asp-for="ReturnUrl" />
+
+    <div class="form-group mb-3">
+        <label asp-for="Product.Name" class="control-label">Название товара</label>
+        <input asp-for="Product.Name" class="form-control" />
+        <span asp-validation-for="Product.Name" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mb-3">
+        <label asp-for="Product.TypeArt" class="control-label">Тип искусства</label>
+        <input asp-for="Product.TypeArt" class="form-control" />
+        <span asp-validation-for="Product.TypeArt" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mb-3">
+        <label asp-for="Product.IdSeller" class="control-label">Продавец</label>
+        <select asp-for="Product.IdSeller" class="form-control" asp-items="ViewBag.IdSeller">
+            <option value="">-- Выберите продавца --</option>
+        </select>
+        <span asp-validation-for="Product.IdSeller" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mb-3">
+        <label asp-for="Product.QuantityForSale" class="control-label">Количество товара</label>
+        <input asp-for="Product.QuantityForSale" type="number" class="form-control" min="0" max="10000" />
+        <span asp-validation-for="Product.QuantityForSale" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mb-3">
+        <label asp-for="Product.Price" class="control-label">Цена</label>
+        <input asp-for="Product.Price" type="number" step="0.01" class="form-control" min="0.01" />
+        <span asp-validation-for="Product.Price" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mb-3">
+        <label asp-for="Product.Status" class="control-label">Статус</label>
+        <select asp-for="Product.Status" class="form-control">
+            <option value="available">В наличии</option>
+            <option value="reserved">Зарезервирован</option>
+            <option value="sold">Продан</option>
+        </select>
+        <span asp-validation-for="Product.Status" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mb-3">
+        <label asp-for="Product.IdIndivBuyer" class="control-label">Индивидуальный покупатель (опционально)</label>
+        <select asp-for="Product.IdIndivBuyer" class="form-control" asp-items="ViewBag.IdIndivBuyer">
+        </select>
+    </div>
+
+    <div class="mt-3">
+        <input type="submit" value="Сохранить" class="btn btn-primary" />
+        <a href="@Model.ReturnUrl" class="btn btn-secondary">Вернуться</a>
+    </div>
+</form>

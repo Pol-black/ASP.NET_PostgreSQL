@@ -1,0 +1,30 @@
+﻿@page
+@model RazorPagesMovie.Pages.CatalogForMaterial.DeleteModel
+
+@{
+    ViewData["Title"] = "Удалить материал";
+}
+
+<h2>Удалить материал</h2>
+
+<div class="alert alert-warning">
+    <strong>Вы уверены, что хотите удалить этот материал?</strong>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <dl class="row mb-0">
+            <dt class="col-sm-3 fw-bold">Название материала</dt>
+            <dd class="col-sm-9">@Html.DisplayFor(model => model.CatalogForMaterial.MaterialName)</dd>
+
+            <dt class="col-sm-3 fw-bold">Цена</dt>
+            <dd class="col-sm-9">@Model.CatalogForMaterial.CostPerUnit.ToString("F2") ₽</dd>
+        </dl>
+    </div>
+</div>
+
+<form method="post" class="mt-3">
+    <input type="hidden" asp-for="CatalogForMaterial.IdMaterial" />
+    <button type="submit" class="btn btn-danger">Удалить</button>
+    <a asp-page="./Index" class="btn btn-secondary ms-2">Отмена</a>
+</form>

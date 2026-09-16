@@ -1,0 +1,61 @@
+﻿@page
+@attribute [Microsoft.AspNetCore.Authorization.Authorize(Roles = "admin,seller,buyer")]
+@model RazorPagesMovie.Pages.Chat.SelectChatPartnerModel
+
+<h2>Выберите партнёра для общения в чате</h2>
+<h4>Ваш профиль</h4>
+<p>Name: @Model.Name<br>
+    Role: @Model.Role<br>
+    Email: @Model.Email<br>
+    Ваш ID: @Model.IdAccount
+</p>
+
+<hr />
+
+@* продавцам показываем список покупателей *@
+@if (@Model.Role == "seller"){
+    <h2>Выберите покупателя для общения</h2>
+
+    @if (Model.Buyers != null && Model.Buyers.Any())
+    {
+        <div class="list-group">
+            @foreach (var buyer in Model.Buyers)
+            {
+                <a asp-page="./Room" asp-route-idSeller="@Model.IdAccount" asp-route-idBuyer="@buyer.IdAccount"
+                    class="list-group-item list-group-item-action">
+                    <strong>@buyer.AccountName</strong> (@buyer.Email)
+                </a>
+            }
+
+        </div>
+    }
+    else
+    {
+        <p>Доступных покупателей не найдено.</p>
+    }
+}
+
+
+
+@* покупателю показываем список продавцов *@
+@if (@Model.Role == "buyer"){
+    <h2>Выберите продавца для общения</h2>
+
+    @if (Model.Sellers!= null && Model.Sellers.Any())
+    {
+        <div class="list-group">
+            @foreach (var seller in Model.Sellers)
+            {
+                <a asp-page="./Room" asp-route-idSeller="@seller.IdAccount" asp-route-idBuyer="@Model.IdAccount"
+                   class="list-group-item list-group-item-action">
+                   <strong>@seller.AccountName</strong> (@seller.Email)
+                </a>
+            }
+
+        </div>
+    }
+    else
+    {
+        <p>Доступных продавцов не найдено.</p>
+    }
+}

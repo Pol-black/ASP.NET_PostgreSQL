@@ -1,0 +1,67 @@
+﻿@page
+@model RazorPagesMovie.Pages.CatalogForMaterial.IndexModel
+
+@{
+    ViewData["Title"] = "Каталог материалов";
+}
+
+<h2>Каталог материалов</h2>
+<p>
+    <a asp-page="Create" class="btn btn-success">+ Добавить материал</a>
+</p>
+<!-- Форма поиска и фильтрации -->
+<form method="get" class="mb-3">
+    <div class="row g-2">
+        <div class="col-md-4">
+            <input type="text"
+                   name="search"
+                   value="@Model.SearchString"
+                   class="form-control"
+                   placeholder="Поиск по названию" />
+        </div>
+        <div class="col-md-2">
+            <input type="number"
+                   name="minPrice"
+                   value="@(Model.MinPrice?.ToString() ?? "")"
+                   step="0.01"
+                   class="form-control"
+                   placeholder="Цена от" />
+        </div>
+        <div class="col-md-2">
+            <input type="number"
+                   name="maxPrice"
+                   value="@(Model.MaxPrice?.ToString() ?? "")"
+                   step="0.01"
+                   class="form-control"
+                   placeholder="Цена до" />
+        </div>
+        <div class="col-md-3">
+            <button type="submit" class="btn btn-primary">Фильтровать</button>
+            <a asp-page="./Index" class="btn btn-secondary ms-2">Сброс</a>
+        </div>
+    </div>
+</form>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.CatalogForMaterial[0].MaterialName)</th>
+            <th>@Html.DisplayNameFor(model => model.CatalogForMaterial[0].CostPerUnit)</th>
+            <th>Действия</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.CatalogForMaterial)
+        {
+            <tr>
+                <td>@item.MaterialName</td>
+                <td>@item.CostPerUnit.ToString("F2") ₽</td>
+                <td>
+                    <a asp-page="./Edit" asp-route-id="@item.IdMaterial">Изменить</a> |
+                    <a asp-page="./Details" asp-route-id="@item.IdMaterial">Подробности</a> |
+                    <a asp-page="./Delete" asp-route-id="@item.IdMaterial">Удалить</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

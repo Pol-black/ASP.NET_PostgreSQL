@@ -1,0 +1,47 @@
+﻿@page
+@model RazorPagesMovie.Pages.Purchase.DetailsModel
+
+@{
+    ViewData["Title"] = "Детали заказа";
+}
+
+<h2>Детали заказа</h2>
+
+<div class="card">
+    <div class="card-body">
+        <dl class="row mb-0">
+            <dt class="col-sm-3">Номер заказа</dt>
+            <dd class="col-sm-9">@Model.Purchase.NumberPurchase</dd>
+
+            <dt class="col-sm-3">Покупатель</dt>
+            <dd class="col-sm-9">@Model.Purchase.IdBuyerNavigation?.AccountName</dd>
+
+            <dt class="col-sm-3">Продавец</dt>
+            <dd class="col-sm-9">@Model.Purchase.IdSellerNavigation?.AccountName</dd>
+
+            <dt class="col-sm-3">Адрес отправления</dt>
+            <dd class="col-sm-9">@Model.Purchase.AddressDeparture</dd>
+
+            <dt class="col-sm-3">Адрес получения</dt>
+            <dd class="col-sm-9">@Model.Purchase.AddressReceiving</dd>
+
+            <dt class="col-sm-3">Способ доставки</dt>
+            <dd class="col-sm-9">
+                @(Model.Purchase.MethodDelivery switch {
+                    "courier" => "Курьер",
+                    "pickup" => "Самовывоз",
+                    "mail" => "Почта",
+                    _ => Model.Purchase.MethodDelivery
+                })
+            </dd>
+
+            <dt class="col-sm-3">Дата создания</dt>
+            <dd class="col-sm-9">@Model.Purchase.CreatedAt.ToString("dd.MM.yyyy")</dd>
+        </dl>
+    </div>
+</div>
+
+<div class="mt-3">
+    <a asp-page="./Edit" asp-route-id="@Model.Purchase.IdPurchase" class="btn btn-primary">Изменить</a>
+    <a asp-page="./Index" class="btn btn-secondary ms-2">Назад к списку</a>
+</div>
